@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">Box for Root</string>
+    <string name="app_name">Box for Magisk</string>
     <string name="app_version">2.0.8-beta.1</string>
     <!-- BaseActivity -->
     <string name="min_module_version">20230801</string>
-    <string name="need_install_module">please install the Box for Root module first and give root permission!</string>
-    <string name="need_update_module">please update your Box for Root module to at least %s !</string>
-    <string name="module_repo_url">https://github.com/taamarin/box_for_magisk</string>
-    <string name="release_repo_url">https://github.com/taamarin/box_for_magisk/releases</string>
+    <string name="need_install_module">please install the Box for Magisk module first and give root permission!</string>
+    <string name="need_update_module">please update your Box for Magisk module to at latest %s !</string>
+    <string name="module_repo_url">https://github.com/d2184/box_for_magisk</string>
+    <string name="release_repo_url">https://github.com/d2184/box_for_magisk/releases</string>
     <string name="wait">please wait…</string>
 
     <!-- Config Editor -->

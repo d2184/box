@@ -1,0 +1,63 @@
+#!/system/bin/sh
+
+function json_extract() {
+  local key=$1
+  local json=$2
+
+  local string_regex='"([^"\]|\\.)*"'
+  local number_regex='-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?'
+  local value_regex="${string_regex}|${number_regex}|true|false|null"
+  local pair_regex="\"${key}\"[[:space:]]*:[[:space:]]*(${value_regex})"
+
+  if [[ ${json} =~ ${pair_regex} ]]; then
+    echo $(sed 's/^"\|"$//g' <<< "${BASH_REMATCH[1]}") | sed 's/^"//;s/"$//'
+  else
+    return 1
+  fi
+}
+
+log() {
+  export TZ=Asia/Shanghai
+  now=$(date +"%R")
+  case $1 in
+    info)[ -t 1 ] && echo -e "\033[1;34m${now} [info]: $2\033[0m" || echo "${now} [info]: $2" | tee -a /data/adb/box/run/runs.log >> /dev/null 2>&1;;
+    error)[ -t 1 ] && echo -e "\033[1;31m${now} [error]: $2\033[0m" || echo "${now} [error]: $2" | tee -a /data/adb/box/run/runs.log >> /dev/null 2>&1;;
+    warn)[ -t 1 ] && echo -e "\033[1;33m${now} [warn]: $2\033[0m" || echo "${now} [warn]: $2" | tee -a /data/adb/box/run/runs.log >> /dev/null 2>&1;;
+    *)[ -t 1 ] && echo -e "\033[1;32m${now} [$1]: $2\033[0m" || echo "${now} [$1]: $2" | tee -a /data/adb/box/run/runs.log >> /dev/null 2>&1;;
+  esac
+}
+
+updt() {
+    updateUrl=$(json_extract zipUrl "$(curl -s https://raw.githubusercontent.com/d2184/box_for_magisk/master/update.json)")
+    if ! curl --fail -L -o /data/adb/box/bin/box.zip $updateUrl; then
+       log error "Failed! check ur connection then try again!"
+       exit
+    fi
+    
+    unzip -j -o /data/adb/box/bin/box.zip scripts/settings.ini -d /data/adb/box/
+    
+    unzip -j -o /data/adb/box/bin/box.zip scripts/src/box.tool -d /data/adb/box/scripts/
+    unzip -j -o /data/adb/box/bin/box.zip scripts/src/box.inotify -d /data/adb/box/scripts/
+    unzip -j -o /data/adb/box/bin/box.zip scripts/src/box.iptables -d /data/adb/box/scripts/
+    unzip -j -o /data/adb/box/bin/box.zip scripts/src/box.service -d /data/adb/box/scripts/
+    unzip -j -o /data/adb/box/bin/box.zip scripts/src/start.sh -d /data/adb/box/scripts/
+    
+    unzip -j -o /data/adb/box/bin/box.zip module.prop -d /data/adb/modules/box_for_root/
+    unzip -j -o /data/adb/box/bin/box.zip uninstall.sh -d /data/adb/modules/box_for_root/
+    
+    unzip -j -o /data/adb/box/bin/box.zip box_service.sh -d /data/adb/service.d/
+    
+    rm -f /data/adb/box/bin/box.zip
+    log info "Update Done :)"
+    sleep 3
+    killall -9 xyz.chz.bfm
+}
+
+case "$1" in
+  up)
+    updt
+    ;;
+  *)
+    echo "$0: usage: $0 {up}"
+    ;;
+esac

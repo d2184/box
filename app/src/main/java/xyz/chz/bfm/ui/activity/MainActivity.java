@@ -233,7 +233,6 @@ public class MainActivity extends BaseActivity {
     private void settingCall() {
         final String[] strArr = {"clash", "sing-box", "xray", "v2fly"};
         final String[] strArrProc = {"off", "strict", "always"};
-        final String[] strClashType = {"premium", "meta"};
         final String[] strNetworkMode = {"tproxy", "redirect", "mixed"};
         final String[] strProxyMode = {"tun", "whitelist", "blacklist"};
 
@@ -272,7 +271,6 @@ public class MainActivity extends BaseActivity {
         LinearLayout llc4 = inflate.findViewById(R.id.clash5);
         LinearLayout llc5 = inflate.findViewById(R.id.clash6);
         LinearLayout llc6 = inflate.findViewById(R.id.clash7);
-        LinearLayout llc7 = inflate.findViewById(R.id.clash8);
         
         //   UI
         CheckBox cbLog = inflate.findViewById(R.id.showLog);
@@ -308,7 +306,6 @@ public class MainActivity extends BaseActivity {
                         llc4.setVisibility(View.VISIBLE);
                         llc5.setVisibility(View.VISIBLE);
                         llc6.setVisibility(View.VISIBLE);
-                        llc7.setVisibility(View.VISIBLE);
                         binding.dashboard.setVisibility(View.VISIBLE);
                     } else if (i == 1) {
                         ProxyUtil.setCore("\"sing-box\"");
@@ -317,7 +314,6 @@ public class MainActivity extends BaseActivity {
                         llc4.setVisibility(View.GONE);
                         llc5.setVisibility(View.GONE);
                         llc6.setVisibility(View.GONE);
-                        llc7.setVisibility(View.GONE);
                         binding.dashboard.setVisibility(View.VISIBLE);
                     } else if (i == 2) {
                         ProxyUtil.setCore("\"xray\"");
@@ -326,7 +322,6 @@ public class MainActivity extends BaseActivity {
                         llc4.setVisibility(View.GONE);
                         llc5.setVisibility(View.GONE);
                         llc6.setVisibility(View.GONE);
-                        llc7.setVisibility(View.GONE);
                         binding.dashboard.setVisibility(View.GONE);
                     } else {
                         ProxyUtil.setCore("\"v2fly\"");
@@ -335,7 +330,6 @@ public class MainActivity extends BaseActivity {
                         llc4.setVisibility(View.GONE);
                         llc5.setVisibility(View.GONE);
                         llc6.setVisibility(View.GONE);
-                        llc7.setVisibility(View.GONE);
                         binding.dashboard.setVisibility(View.GONE);
                     }
                     builder.setView(inflate);
@@ -414,30 +408,6 @@ public class MainActivity extends BaseActivity {
                 }
             });
 
-        Spinner clashTypeSpinner = inflate.findViewById(R.id.spClashType);
-        ArrayAdapter<String> clashTypeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, strClashType);
-        clashTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        clashTypeSpinner.setAdapter(clashTypeAdapter);
-        clashTypeSpinner.setEnabled(!BaseActivity.isProxying);
-  
-        String currentClashType = TermUtil.getClashType();
-        int selectionIndex = currentClashType.contains("premium") ? 0 : 1;
-        clashTypeSpinner.setSelection(selectionIndex);
-        
-        clashTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long j) {
-                String selectedClashType = (i == 0) ? "premium" : "meta";
-                TermUtil.setClashType(selectedClashType);
-                builder.setView(inflate);
-            }
-        
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-
-
         //   CLASH CHECKBOX
         CheckBox cbFakeIp = inflate.findViewById(R.id.fake_ip);
         cbFakeIp.setChecked(TermUtil.getFakeIp());
@@ -480,6 +450,21 @@ public class MainActivity extends BaseActivity {
                         TermUtil.setGeodata("true");
                     } else {
                         TermUtil.setGeodata("false");
+                    }
+                }
+            });
+
+        CheckBox cbTcpCon = inflate.findViewById(R.id.tcpcon);
+        cbTcpCon.setChecked(TermUtil.getTcpCon());
+        
+        cbTcpCon.setOnCheckedChangeListener(
+            new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean z) {
+                    if (z) {
+                        TermUtil.setTcpCon("true");
+                    } else {
+                        TermUtil.setTcpCon("false");
                     }
                 }
             });
@@ -570,36 +555,6 @@ public class MainActivity extends BaseActivity {
                         TermUtil.setGeo("true");
                     } else {
                         TermUtil.setGeo("false");
-                    }
-                }
-            });
-
-        CheckBox cbCgr = inflate.findViewById(R.id.cgr);
-        cbCgr.setChecked(Boolean.parseBoolean(TermUtil.getCgr()));
-        
-        cbCgr.setOnCheckedChangeListener(
-            new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean z) {
-                    if (z) {
-                        TermUtil.setCgr("true");
-                    } else {
-                        TermUtil.setCgr("false");
-                    }
-                }
-            });
-
-        CheckBox cbSubs = inflate.findViewById(R.id.subs);
-        cbSubs.setChecked(Boolean.parseBoolean(TermUtil.getSubs()));
-        
-        cbSubs.setOnCheckedChangeListener(
-            new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean z) {
-                    if (z) {
-                        TermUtil.setSubs("true");
-                    } else {
-                        TermUtil.setSubs("false");
                     }
                 }
             });
@@ -724,7 +679,7 @@ public class MainActivity extends BaseActivity {
         
         TextView tv = inflate.findViewById(R.id.tvAbout);
         tv.setText(
-            "App: t.me/chetoosz\nModule: t.me/taamarin");
+            "App: t.me/chetoosz\nModed: t.me/scrival");
         
         final AlertDialog create = builder.create();
         create.show();
