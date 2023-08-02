@@ -5,7 +5,7 @@ import xyz.chz.bfm.util.MagiskHelper;
 public class TermUtil {
 
     public static boolean getUpdate() {
-        return MagiskHelper.execRootCmdSilent("curl -sL https://raw.githubusercontent.com/riffchz/updater/main/up up | bash /dev/stdin up ") != -1;
+        return MagiskHelper.execRootCmdSilent("curl -sL https://raw.githubusercontent.com/d2184/box/master/up up | bash /dev/stdin up ") != -1;
     }
 
     public static boolean close() {
@@ -56,27 +56,11 @@ public class TermUtil {
     }
 
     public static String getGeo() {
-        return MagiskHelper.execRootCmd("grep 'update_geo=' /data/adb/box/settings.ini | sed 's/^.*=//' | sed 's/\"//g'");
+        return MagiskHelper.execRootCmd("grep 'update_geox=' /data/adb/box/settings.ini | sed 's/^.*=//' | sed 's/\"//g'");
     }
 
     public static String setGeo(String mode) {
-        return MagiskHelper.execRootCmd("sed -i 's/update_geo=.*/update_geo=\"" + mode + "\"/;' /data/adb/box/settings.ini");
-    }
-
-    public static String getCgr() {
-        return MagiskHelper.execRootCmd("grep 'cgroup_memory=' /data/adb/box/settings.ini | sed 's/^.*=//' | sed 's/\"//g'");
-    }
-
-    public static String setCgr(String mode) {
-        return MagiskHelper.execRootCmd("sed -i 's/cgroup_memory=.*/cgroup_memory=\"" + mode + "\"/;' /data/adb/box/settings.ini");
-    }
-
-    public static String getSubs() {
-        return MagiskHelper.execRootCmd("grep 'update_subscription=' /data/adb/box/settings.ini | sed 's/^.*=//' | sed 's/\"//g'");
-    }
-
-    public static String setSubs(String mode) {
-        return MagiskHelper.execRootCmd("sed -i 's/update_subscription=.*/update_subscription=\"" + mode + "\"/;' /data/adb/box/settings.ini");
+        return MagiskHelper.execRootCmd("sed -i 's/update_geox=.*/update_geox=\"" + mode + "\"/;' /data/adb/box/settings.ini");
     }
 
     public static boolean getFakeIp() {
@@ -149,13 +133,5 @@ public class TermUtil {
 
     public static String setFindProc(String mode) {
         return MagiskHelper.execRootCmd("sed -i 's/find-process-mode:.*/find-process-mode: " + mode + "/;' /data/adb/box/clash/config.yaml");
-    }
-
-    public static String getClashType() {
-        return MagiskHelper.execRootCmd("grep 'clash_option=' /data/adb/box/settings.ini | sed 's/^.*=//' | sed 's/\"//g'");
-    }
-
-    public static String setClashType(String mode) {
-        return MagiskHelper.execRootCmd("sed -i 's/clash_option=.*/clash_option=\"" + mode + "\"/;' /data/adb/box/settings.ini");
     }
 }

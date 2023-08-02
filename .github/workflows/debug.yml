@@ -1,6 +1,7 @@
 name: Build APKs
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
@@ -12,6 +13,12 @@ on:
     branches:
       - master
       - dev
+env: 
+  TZ: Asia/Shanghai
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -19,21 +26,27 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Get tags
       id: get_head
       run: |
         echo "head=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
+    - name: Set versionCode
+      run: |
+        sed -i "s/versionCode .*/versionCode $(date +%Y%m%d)/" app/build.gradle
+
     - name: Set up Java
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v4
       with:
         distribution: 'zulu'
         java-version: 17
         
     - name: Clean Gradle Cache
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/gradle-build-action@v3
       with:
         gradle-home-cache-cleanup: true
         
@@ -45,65 +58,46 @@ jobs:
       run: |
         ls app/build/outputs/apk/release
 
-    - uses: r0adkll/sign-android-release@v1
+    - uses: d2184/android-sign@main
       name: Sign app APK
-      id: sign_apks
       with:
         releaseDirectory: app/build/outputs/apk/release
-        alias: key.alias
+        output: app/build/outputs/apk/release
+        alias: ${{ secrets.KEY_ALIAS }}
         keyPassword: ${{ secrets.KEY_PASSWORD }}
         signingKeyBase64: ${{ secrets.KEYSTORE_CONTENT }}
         keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+      env:
+        BUILD_TOOLS_VERSION: "33.0.0"
 
     - name: Rename Apks
       run: |
         mkdir -p APKs
-        mv ${{ steps.sign_apks.outputs.signedReleaseFile }} APKs/box-manager-${{ steps.get_head.outputs.head }}-prerelease.apk
+        mv app/build/outputs/apk/release/app-release-unsigned-signed.apk APKs/box-manager-${{ steps.get_head.outputs.head }}-alpha.apk
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
+      if: ${{ github.ref_name == 'master' && github.event_name == 'pull_request' }}
       with:
         name: signed_apps
         path: APKs
 
     - name: Delete current Prerelease-alpha assets
       if: ${{ github.ref_name == 'master' && github.event_name != 'pull_request' }}
-      uses: andreaswilli/delete-release-assets-action@v2.0.0
+      uses: mknejp/delete-release-assets@v1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        tag: Prerelease-alpha
-        deleteOnlyFromDrafts: false
-
-    - name: Tag Repo
-      if: ${{ github.ref_name == 'master' && github.event_name != 'pull_request' }}
-      uses: richardsimko/update-tag@v1
-      with:
-        tag_name: Prerelease-alpha
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: Prerelease-Alpha
+        assets: "*.apk"
+        fail-if-no-assets: false
+        fail-if-no-release: false
 
     - name: Upload Prerelease-alpha
       if: ${{ github.ref_name == 'master' && github.event_name != 'pull_request' }}
-      uses: softprops/action-gh-release@v1
+      uses: svenstaro/upload-release-action@master
       with:
-        tag: ${{ github.ref_name }}
-        tag_name: Prerelease-alpha
-        files: APKs/*
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        tag: Prerelease-Alpha
+        release_name: Prerelease-Alpha
+        file: "APKs/*.apk"
         prerelease: true
-        generate_release_notes: true
-
-    - name: Upload to Telegram
-      if: ${{ github.ref_name == 'master' && github.event_name != 'pull_request' }}
-      env:
-        CHAT_ID: ${{ secrets.CHAT_ID }}
-        CACHE_CHAT_ID: ${{ secrets.CACHE_CHAT_ID }}
-        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-        MESSAGE_THREAD_ID: ${{ secrets.MESSAGE_THREAD_ID }}
-        COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-        COMMIT_URL: ${{ github.event.head_commit.url }}
-        RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        TITLE: Box Manager
-      run: |
-        export VERSION=$(git rev-parse --short HEAD)
-        FILE=$(find ./APKs/* -type f)
-        pip3 install python-telegram-bot
-        python3 docs/tubot.py $FILE
+        file_glob: true

@@ -10,7 +10,7 @@ public class CheckUpdate {
             int versiWeb =
                     Integer.parseInt(
                             HttpGetter.get(
-                                    "https://raw.githubusercontent.com/taamarin/box_for_magisk/master/update.json",
+                                    "https://raw.githubusercontent.com/d2184/box_for_magisk/master/update.json",
                                     "versionCode"));
             int versiNow = Integer.parseInt(ConfigManager.getModuleVersionCode());
 
@@ -27,7 +27,7 @@ public class CheckUpdate {
     public static String getVer() {
         try {
             return HttpGetter.get(
-                    "https://raw.githubusercontent.com/taamarin/box_for_magisk/master/update.json",
+                    "https://raw.githubusercontent.com/d2184/box_for_magisk/master/update.json",
                     "versionCode");
         } catch (Exception e) {
             return null;

@@ -107,7 +107,7 @@ public class ProxyUtil {
     }
 
     public static boolean isOff() {
-        int i = MagiskHelper.execRootCmdSilent("if [ -f /data/adb/modules/box_for_root/disable ] ; then exit 1;fi");
+        int i = MagiskHelper.execRootCmdSilent("if [ -f /data/adb/modules/box_for_magisk/disable ] ; then exit 1;fi");
         Log.d(TAG, "isOff: " + i);
         return i == 1;
     }
