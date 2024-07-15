@@ -231,7 +231,7 @@ public class MainActivity extends BaseActivity {
     }
     
     private void settingCall() {
-        final String[] strArr = {"clash", "sing-box", "xray", "v2fly"};
+        final String[] strArr = {"clash", "sing-box", "xray", "v2fly", "hysteria"};
         final String[] strArrProc = {"off", "strict", "always"};
         final String[] strNetworkMode = {"tproxy", "redirect", "mixed"};
         final String[] strProxyMode = {"tun", "whitelist", "blacklist"};
@@ -291,8 +291,10 @@ public class MainActivity extends BaseActivity {
             spin.setSelection(1);
         } else if (ProxyUtil.getCore().contains("xray")) {
             spin.setSelection(2);
-        } else {
+        } else if (ProxyUtil.getCore().contains("v2fly")) {
             spin.setSelection(3);
+        } else {
+            spin.setSelection(4);
         }
         spin.setOnItemSelectedListener(
             new AdapterView.OnItemSelectedListener() {
@@ -323,8 +325,16 @@ public class MainActivity extends BaseActivity {
                         llc5.setVisibility(View.GONE);
                         llc6.setVisibility(View.GONE);
                         binding.dashboard.setVisibility(View.GONE);
-                    } else {
+                    } else if (i == 3) {
                         ProxyUtil.setCore("\"v2fly\"");
+                        clashSetTV.setVisibility(View.GONE);
+                        llc1.setVisibility(View.GONE);
+                        llc4.setVisibility(View.GONE);
+                        llc5.setVisibility(View.GONE);
+                        llc6.setVisibility(View.GONE);
+                        binding.dashboard.setVisibility(View.GONE);
+                    } else {
+                        ProxyUtil.setCore("\"hysteria\"");
                         clashSetTV.setVisibility(View.GONE);
                         llc1.setVisibility(View.GONE);
                         llc4.setVisibility(View.GONE);
