@@ -233,8 +233,8 @@ public class MainActivity extends BaseActivity {
     private void settingCall() {
         final String[] strArr = {"clash", "sing-box", "xray", "v2fly", "hysteria"};
         final String[] strArrProc = {"off", "strict", "always"};
-        final String[] strNetworkMode = {"tproxy", "redirect", "mixed"};
-        final String[] strProxyMode = {"tun", "whitelist", "blacklist"};
+        final String[] strNetworkMode = {"tproxy", "redirect", "mixed", "enhance", "tun"};
+        final String[] strProxyMode = {"whitelist", "blacklist"};
 
         View inflate = LayoutInflater.from(this).inflate(R.layout.setting_dialog, (ViewGroup) null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -356,12 +356,16 @@ public class MainActivity extends BaseActivity {
         spNM.setEnabled(!BaseActivity.isProxying);
         spNM.setAdapter((SpinnerAdapter) nmAdapter);
         
-        if (TermUtil.getNetworkMode().contains("tpro")) {
+        if (TermUtil.getNetworkMode().contains("tproxy")) {
             spNM.setSelection(0);
-        } else if (TermUtil.getNetworkMode().contains("redir")) {
+        } else if (TermUtil.getNetworkMode().contains("redirect")) {
             spNM.setSelection(1);
-        } else {
+        } else if (TermUtil.getNetworkMode().contains("mixed")) {
             spNM.setSelection(2);
+        } else if (TermUtil.getNetworkMode().contains("enhance")) {
+            spNM.setSelection(3);
+        } else {
+            spNM.setSelection(4);
         }
         
         spNM.setOnItemSelectedListener(
@@ -373,8 +377,12 @@ public class MainActivity extends BaseActivity {
                         TermUtil.setNetworkMode("tproxy");
                     } else if (i == 1) {
                         TermUtil.setNetworkMode("redirect");
-                    } else {
+                    } else if (i == 2) {
                         TermUtil.setNetworkMode("mixed");
+                    } else if (i == 3) {
+                        TermUtil.setNetworkMode("enhance");
+                    } else {
+                        TermUtil.setNetworkMode("tun");
                     }
                     builder.setView(inflate);
                 }
@@ -390,12 +398,10 @@ public class MainActivity extends BaseActivity {
         spProxyMode.setEnabled(!BaseActivity.isProxying);
         spProxyMode.setAdapter((SpinnerAdapter) ProxyModeAdapter);
         
-        if (TermUtil.getProxyMode().contains("tun")) {
+        if (TermUtil.getProxyMode().contains("whitelist")) {
             spProxyMode.setSelection(0);
-        } else if (TermUtil.getProxyMode().contains("whitelist")) {
-            spProxyMode.setSelection(1);
         } else {
-            spProxyMode.setSelection(2);
+            spProxyMode.setSelection(1);
         }
         
         spProxyMode.setOnItemSelectedListener(
@@ -404,8 +410,6 @@ public class MainActivity extends BaseActivity {
                 public void onItemSelected(
                         AdapterView<?> adapterView, View view, int i, long j) {
                     if (i == 0) {
-                        TermUtil.setProxyMode("tun");
-                    } else if (i == 1) {
                         TermUtil.setProxyMode("whitelist");
                     } else {
                         TermUtil.setProxyMode("blacklist");
