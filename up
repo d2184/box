@@ -42,8 +42,8 @@ updt() {
     unzip -j -o /data/adb/box/bin/box.zip scripts/src/box.service -d /data/adb/box/scripts/
     unzip -j -o /data/adb/box/bin/box.zip scripts/src/start.sh -d /data/adb/box/scripts/
     
-    unzip -j -o /data/adb/box/bin/box.zip module.prop -d /data/adb/modules/box_for_root/
-    unzip -j -o /data/adb/box/bin/box.zip uninstall.sh -d /data/adb/modules/box_for_root/
+    unzip -j -o /data/adb/box/bin/box.zip module.prop -d /data/adb/modules/box_for_magisk/
+    unzip -j -o /data/adb/box/bin/box.zip uninstall.sh -d /data/adb/modules/box_for_magisk/
     
     unzip -j -o /data/adb/box/bin/box.zip box_service.sh -d /data/adb/service.d/
     
