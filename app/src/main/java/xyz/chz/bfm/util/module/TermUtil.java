@@ -111,14 +111,6 @@ public class TermUtil {
         return MagiskHelper.execRootCmd("sed -i '/^sniffer:/{n;s/enable:.*/enable: " + mode + "/;}' /data/adb/box/clash/config.yaml");
     }
 
-    public static boolean getPortDetect() {
-        return "true".equals(MagiskHelper.execRootCmd("grep 'port_detect=' /data/adb/box/settings.ini | sed 's/^.*=//' | sed 's/\"//g'"));
-    }
-
-    public static String setPortDetect(String mode) {
-        return MagiskHelper.execRootCmd("sed -i 's/port_detect=.*/port_detect=\"" + mode + "\"/;' /data/adb/box/settings.ini");
-    }
-
     public static boolean getIpv6() {
         return "true".equals(MagiskHelper.execRootCmd("grep 'ipv6=' /data/adb/box/settings.ini | sed 's/^.*=//' | sed 's/\"//g'"));
     }

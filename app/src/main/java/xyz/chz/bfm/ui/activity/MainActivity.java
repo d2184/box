@@ -498,21 +498,6 @@ public class MainActivity extends BaseActivity {
                 }
             });
         
-        CheckBox cbPort = inflate.findViewById(R.id.port_detect);
-        cbPort.setChecked(TermUtil.getPortDetect());
-        
-        cbPort.setOnCheckedChangeListener(
-            new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean z) {
-                    if (z) {
-                        TermUtil.setPortDetect("true");
-                    } else {
-                        TermUtil.setPortDetect("false");
-                    }
-                }
-            });
-
         CheckBox cbQuic = inflate.findViewById(R.id.quic);
         cbQuic.setChecked(TermUtil.getQuic());
         
